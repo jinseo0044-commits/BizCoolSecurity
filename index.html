@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123d7b">
+  <title>BizCool Security 2.0</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- 로그인 화면 -->
+  <section id="loginPage" class="login-page">
+    <div class="brand-icon">♢</div>
+    <h1>BizCool <span>Security</span></h1>
+    <p class="subtitle">학교 동아리 스마트 출입관리</p>
+
+    <div class="login-box">
+      <h2>환영합니다</h2>
+      <p>관리자 데모 화면에 로그인하세요.</p>
+
+      <label for="username">아이디</label>
+      <input id="username" placeholder="admin"
+             autocomplete="off">
+
+      <label for="password">비밀번호</label>
+      <input id="password" type="password"
+             placeholder="데모 비밀번호">
+
+      <button class="primary" onclick="login()">
+        로그인
+      </button>
+
+      <p class="demo-info">
+        체험용 ID: admin / 비밀번호: 1234
+      </p>
+      <p class="warning">
+        실제 보안 인증이 아닌 화면 시연용 로그인입니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- 메인 앱 -->
+  <section id="mainPage" hidden>
+
+    <header class="topbar">
+      <div class="top-title">
+        <div class="logo-small">♢</div>
+        <div>
+          <strong>BizCool Security</strong>
+          <small>SMART ACCESS SYSTEM</small>
+        </div>
+      </div>
+      <button class="icon-btn" onclick="showNotice()"
+              aria-label="알림">♧</button>
+    </header>
+
+    <main class="content">
+
+      <!-- 홈 화면 -->
+      <section id="home" class="page active">
+        <p class="hello">안녕하세요, 관리자님!</p>
+        <p class="muted">오늘도 안전한 동아리실을 관리하세요.</p>
+
+        <div class="room-card">
+          <span class="eyebrow">MY SECURITY ZONE</span>
+          <h2>비즈쿨 동아리실</h2>
+          <p>동아마이스터고 · 출입관리</p>
+          <span class="status-chip">● 데모 시스템</span>
+        </div>
+
+        <div class="card">
+          <div class="section-title">
+            <h3>출입문 상태</h3>
+            <span id="lockBadge" class="badge">잠금</span>
+          </div>
+
+          <div class="lock-display">
+            <div id="lockSymbol" class="lock-circle">🔒</div>
+            <h2 id="lockText">출입문 잠김</h2>
+            <p>시뮬레이션 상태</p>
+          </div>
+
+          <button class="primary" id="unlockBtn"
+                  onclick="toggleLock()">
+            원격 잠금해제 체험
+          </button>
+        </div>
+
+        <div class="stats">
+          <div class="mini-card">
+            <span>◉</span>
+            <strong>지문인식</strong>
+            <p>미연결</p>
+          </div>
+          <div class="mini-card">
+            <span>▣</span>
+            <strong>ESP32</strong>
+            <p>미연결</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">
+            <h3>최근 활동</h3>
+            <button class="text-btn"
+                    onclick="navigate('history')">
+              전체보기 ›
+            </button>
+          </div>
+          <div id="recentLogs"></div>
+        </div>
+      </section>
+
+      <!-- 출입기록 -->
+      <section id="history" class="page">
+        <h2>출입기록</h2>
+        <p class="muted">모의 출입 및 관리자 활동 내역</p>
+        <input id="searchLogs" placeholder="기록 검색"
+               oninput="renderLogs()">
+        <div class="card">
+          <div id="allLogs"></div>
+        </div>
+      </section>
+
+      <!-- 구성원 -->
+      <section id="members" class="page">
+        <h2>구성원 관리</h2>
+        <p class="muted">출입 권한 관리 미리보기</p>
+
+        <div class="card">
+          <div class="member">
+            <span class="avatar">A</span>
+            <div>
+              <strong>관리자 (데모)</strong>
+              <p>시스템 관리 권한</p>
+            </div>
+            <span class="badge">관리자</span>
+          </div>
+        </div>
+
+        <button class="outline" onclick="memberNotice()">
+          + 구성원 등록
+        </button>
+
+        <p class="warning">
+          실제 구성원 등록과 지문정보 저장은
+          아직 지원하지 않습니다.
+        </p>
+      </section>
+
+      <!-- 설정 -->
+      <section id="settings" class="page">
+        <h2>시스템 설정</h2>
+        <p class="muted">앱 환경 및 장치 관리</p>
+
+        <div class="card">
+          <div class="setting-row">
+            <span>이벤트 알림</span>
+            <input type="checkbox" id="notifications" checked>
+          </div>
+          <div class="setting-row">
+            <span>장치 연결</span>
+            <span class="muted">미연결</span>
+          </div>
+          <div class="setting-row">
+            <span>앱 버전</span>
+            <span class="muted">2.0 Demo</span>
+          </div>
+          <div class="setting-row">
+            <span>운영 모드</span>
+            <span class="muted">시뮬레이션</span>
+          </div>
+        </div>
+
+        <button class="outline" onclick="logout()">
+          로그아웃
+        </button>
+      </section>
+
+    </main>
+
+    <!-- 하단 메뉴 -->
+    <nav class="bottom-nav">
+      <button class="nav-item selected" data-tab="home"
+              onclick="navigate('home')">
+        <span>⌂</span>홈
+      </button>
+      <button class="nav-item" data-tab="history"
+              onclick="navigate('history')">
+        <span>◷</span>출입기록
+      </button>
+      <button class="nav-item" data-tab="members"
+              onclick="navigate('members')">
+        <span>♙</span>구성원
+      </button>
+      <button class="nav-item" data-tab="settings"
+              onclick="navigate('settings')">
+        <span>⚙</span>설정
+      </button>
+    </nav>
+
+  </section>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
